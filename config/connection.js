@@ -13,7 +13,7 @@ const sequelize = new Sequelize(config.development.url, {
 
 try {
   sequelize.authenticate();
-  console.log('conectado com a base de dados!');
+  console.log('Conectado com a base de dados!');
 } catch (error) {
   console.error('Sem comunicação com a base de dados!', error);
 }
