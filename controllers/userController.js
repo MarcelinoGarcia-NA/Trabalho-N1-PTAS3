@@ -1,90 +1,84 @@
 const User = require('../models/User');
-const secret = require('../config/auth.json');
+const secret = require('../config/config');
 const jwt = require('jsonwebtoken');
 
-/*
 const createUser = async (req, res) => {
-    const {            } = req.body;
+    const { name, password, email } = req.body;
     await User.create({
-       
-
-
+        name: name,
+        password: password,
+        email: email
     }).then(() => {
-        res.json('         ');
-        console.log('           ');
+        res.json('Cadastro de usuário realizado com sucesso!');
+        console.log('Cadastro de usuário realizado com sucesso!');
     }).catch((erro) => {
-        res.json('             ');
-        console.log(`  : ${erro}`);
+        console.log(`Ops, deu erro: ${erro}`);
     })
 }
+
+const findUser = async (req, res) => {
+    const user = await User.findOne({
+        where: { id: parseInt(req.params.id) },
+      });    
+      return res.json(user);  
+}
+
 const findUsers = async (req, res) => {
-    const     = await User.findAll();
-    try {
-        res.json(    );
-    } catch (error) {
-        res.status(404).json("Ocorreu um erro na busca!");
-    };
+    var users = await User.findAll()
+        console.log("Mostrando as informações dos usuarios");
+        return res.json(users);
 }
 
 const deleteUser = async (req, res) => {
-    const id = parseInt(req.params.id);
     try {
-        await User.destroy({
-            where: {
-                
-            }
-        }).then(() => {
-            res.json("         ");
-        })
-    } catch (error) {
-        res.status(404).json("      ");
+      await User.destroy({ where: { id: parseInt(req.params.id) } });
+      res.json('Usuário deletado com sucesso!');
+      console.log('Usuário deletado com sucesso!');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Ocorreu um erro ao deletar o uuário.' });
     }
 }
+
 const updateUser = async (req, res) => {
-    const id = parseInt(req.params.id);
-    const {       } = req.body;
+    const { name, password, email } = req.body;
     try {
-        await User.update(
-            {
-               
-            },
-            {
-                where: {
-                    id: id
-                }
-            }
-        ).then(() => {
-            res.json("            ");
-        })
-    } catch (error) {
-        res.status(404).json("                !");
-    }
-}
-const authenticatedUser = async (req, res) => {
-    const {       } = req.body;
-    try {
-        const isUserAuthenticated = await User.findOne({
-            where: {
-                
-            }
-        })
-        const token = jwt.sign({
-            name: 
-            email: 
-        },
-            secret.secret, {
-            expiresIn: 86400,
-        })
-        return res.json({
-            name: 
-            email: isUserAuthenticated.email,
-            token: token
-        });
-    } catch (error) {
-        return res.json("");
+      await User.update({ 
+        name: name,
+        password: password,
+        email: email 
+    },{
+        where: { id: parseInt(req.params.id) }
+    })
+      res.json('Usuário alterado com sucesso!');
+      console.log('Usuário alterado com sucesso!');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Ocorreu um erro ao deletar o uuário.' });
     }
 }
 
+const authenticateUser = async (req, res) => {
+    const { email, password } = req.body;
+    
+    try{
+      const isUserAuthenticated = await User.findOne({
+        where: {
+          email: email,
+          password: password
+        }
+      });
+      const token = jwt.sign({ id: email}, secret.secret, {
+        expiresIn: 86400,
+      });
+      return res.json({
+        name: isUserAuthenticated.name,
+        email: isUserAuthenticated.email,
+        token: token
+      });
+    } catch (err){
+      res.json("Usuário não encontrado!");
+    }
+}
 
-module.exports = { createUser, findUsers, deleteUser, updateUser, authenticatedUser };
-*/
+module.exports = { createUser, findUser, findUsers, deleteUser, updateUser, authenticateUser };
